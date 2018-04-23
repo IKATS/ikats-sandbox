@@ -1,0 +1,193 @@
+version: '2'
+services:
+
+  tomee_ingestion:
+    network_mode: bridge
+    container_name: ikats-ingestion
+    image: ${IMAGE_INGESTION}
+    ports:
+      - "8081:8081"
+    environment:
+      DB_HOST: pgsql.dev
+      DB_PORT: 5432
+      OPENTSDB_READ_HOST: opentsdb
+      OPENTSDB_READ_PORT: 4242
+      OPENTSDB_WRITE_HOST: opentsdb
+      OPENTSDB_WRITE_PORT: 4242
+      C3P0_ACQUIRE_INCREMENT: 2
+      C3P0_MAX_SIZE: 20
+      C3P0_IDLE_TEST_PERIOD: 50
+      C3P0_MAX_STATEMENTS: 15
+      C3P0_MIN_SIZE: 5
+      C3P0_TIMEOUT: 90
+    depends_on:
+      - pgsql.dev
+      - opentsdb
+    links:
+      - pgsql.dev
+      - opentsdb
+    volumes:
+      - /var/lib/ikats/IKATSDATA:/mnt/IKATSDATA
+
+  python_api:
+    network_mode: bridge
+    depends_on:
+      - pgsql.dev
+      - spark-master
+    image: ${IMAGE_PYBASE}
+    ports:
+      - 8000:8000
+    environment:
+      GUNICORN_PORT: 8000
+      OPENTSDB_READ_HOST: opentsdb
+      OPENTSDB_READ_PORT: 4242
+      OPENTSDB_WRITE_HOST: opentsdb
+      OPENTSDB_WRITE_PORT: 4242
+      POSTGRES_HOST: pgsql.dev
+      POSTGRES_PORT: 5432
+      SPARK_MASTER_HOST: spark-master
+      SPARK_MASTER_PORT: 7077
+      TDM_HOST: datamodel-api
+      TDM_PORT: 8080
+    links:
+      - opentsdb
+      - datamodel-api
+      - spark-master
+      - pgsql.dev
+
+  spark-master:
+    network_mode: bridge
+    image: ${IMAGE_SPARK}
+    container_name: spark-master
+    ports:
+      - "10000:8080"
+      - "7077:7077"
+    environment:
+      SPARK_MODE: master
+    links:
+      - opentsdb
+      - datamodel-api
+
+  spark-worker-1:
+    network_mode: bridge
+    image: ${IMAGE_PYBASE}
+    container_name: spark-worker-1
+    links:
+      - spark-master
+      - opentsdb
+      - datamodel-api
+      - pgsql.dev
+    depends_on:
+      - spark-master
+    user: root
+    ports:
+      - "10001:8081"
+    environment:
+      OPENTSDB_READ_HOST: opentsdb
+      OPENTSDB_READ_PORT: 4242
+      OPENTSDB_WRITE_HOST: opentsdb
+      OPENTSDB_WRITE_PORT: 4242
+      POSTGRES_HOST: pgsql.dev
+      POSTGRES_PORT: 5432
+      SPARK_MASTER_HOST: spark-master
+      SPARK_MASTER_PORT: 7077
+      SPARK_MODE: slave
+      TDM_HOST: datamodel-api
+      TDM_PORT: 8080
+
+  hmi:
+    network_mode: bridge
+    image: ${IMAGE_HMI}
+    ports:
+      - "80:80"
+    environment:
+      TOMCAT_ADDR: ${DEMO_HOST}:8087
+      GUNICORN_ADDR: ${DEMO_HOST}:8000
+      TOMEE_ADDR: ${DEMO_HOST}:8081
+      OPENTSDB_ADDR: ${DEMO_HOST}:4242
+
+  datamodel-api:
+    network_mode: bridge
+    image: ${IMAGE_DATAMODEL}
+    ports:
+      - "8087:8080"
+    environment:
+      TOMCAT_HOST: datamodel-api
+      TOMCAT_PORT: 8080
+      DB_HOST: pgsql.dev
+      DB_PORT: 5432
+      OPENTSDB_HOST: opentsdb-read
+      OPENTSDB_PORT: 4242
+      C3P0_ACQUIRE_INCREMENT: 2
+      C3P0_MAX_SIZE: 20
+      C3P0_IDLE_TEST_PERIOD: 50
+      C3P0_MAX_STATEMENTS: 15
+      C3P0_MIN_SIZE: 5
+      C3P0_TIMEOUT: 90
+    depends_on:
+      - pgsql.dev
+      - opentsdb
+    links:
+      - pgsql.dev
+      - opentsdb
+
+  pgsql.dev:
+    network_mode: bridge
+    image: ${IMAGE_POSTGRES}
+    environment:
+      POSTGRES_PASSWORD: ikats
+      POSTGRES_USER: ikats
+      POSTGRES_DB: ikats
+      PGDATA: /home/postgres/psql/9.5/ikats
+    ports:
+      - "5432:5432"
+    volumes:
+      - /var/lib/ikats/docker_bindings/postgresql:/home/postgres/psql/9.5
+
+  hbase-docker:
+    network_mode: bridge
+    hostname: hbase-docker
+    image: ${IMAGE_HBASE}
+    ports:
+      # Master port
+      - "16010:16010"
+      # Zk port
+      - "2181:2181"
+      - "38951:38951"
+      - "9090:9090"
+      - "9095:9095"
+      - "8080:8080"
+      - "8085:8085"
+    volumes:
+      - /var/lib/ikats/docker_bindings/hbase/hbase:/data/hbase
+
+  opentsdb:
+    network_mode: bridge
+    image: ${IMAGE_OPENTSDB}
+    depends_on:
+      - hbase-docker
+    links:
+      - hbase-docker
+    restart: on-failure
+    ports:
+      - "4242:4242"
+      - "60030:60030"
+    environment:
+      TSD_CONF_tsd__storage__hbase__zk_quorum: hbase-docker
+      TSD_CONF_tsd__network__port: 4242
+      TSD_CONF_tsd__http__staticroot: /usr/share/opentsdb/static/
+      TSD_CONF_tsd__http__cachedir: /tmp/opentsdb
+      TSD_CONF_tsd__http__request__enable_chunked: "true"
+      TSD_CONF_tsd__http__request__max_chunk: 2000000000
+      TSD_CONF_tsd__core__auto_create_metrics: "true"
+      TSD_CONF_tsd__storage__max_tags: 8
+      TSD_CONF_tsd__storage__uid__width__metric: 3
+      TSD_CONF_tsd__storage__uid__width__tagk: 3
+      TSD_CONF_tsd__storage__uid__width__tagv: 3
+      TSD_CONF_tsd__http__query__allow_delete: "true"
+      TSD_CONF_tsd__core__uid__random_metrics: "true"
+      TSD_CONF_tsd__http__show_stack_trace: "true"
+      TSD_CONF_tsd__storage__enable_compaction: "false"
+      TSD_CONF_tsd__storage__flush_interval: 500
+      TSD_CONF_tsd__storage__fix_duplicates: "true"
+      TSD_CONF_tsd__http__request__cors_domains: "*"
