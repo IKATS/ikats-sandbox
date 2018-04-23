@@ -1,4 +1,4 @@
-INSTALLATION SANDBOX IKATS from CS network on linux desktop:
+INSTALLATION SANDBOX IKATS on linux desktop:
 ------------------------------------------------------------
 
 * install docker:
@@ -20,24 +20,19 @@ INSTALLATION SANDBOX IKATS from CS network on linux desktop:
   cd ~/SCM
   git clone https://github.com/IKATS/ikats-sandbox.git
   ```
-* login docker hub:
-  ```bash
-  docker login hub.ops.ikats.org -u ikats -p ikatspass
-  ```
-* set proxy configuration (if needed):
+* set docker proxy configuration (if needed):
   edit docker proxy configuration file and fill in variables HTTP_PROXY, HTTPS_PROXY, NO_PROXY:
   ```bash
   sudo vi /etc/systemd/system/docker.service.d/http-proxy.conf
   ```
-* get docker_bindings from github ikats-sandbox:
+* retrieve sandbox_docker_bindings.tar.gz and sandbox_hourly_weather_import_data.zip from last available release on github and unzip them:
   ```bash
   sudo mkdir /var/lib/ikats
-  sudo chown -R ikats:ikats /var/lib/ikats/
-  ```
-* retrieve docker_bindings_sandbox.tar.gz from last available release on github and unzip them:
-  ```bash
-  cp docker_bindings_sandbox.tar.gz /var/lib/ikats/
-  tar xvfz /var/lib/ikats/docker_bindings_sandbox.tar.gz
+  sudo chown -R "user_id":"user_id" /var/lib/ikats/
+  cp sandbox_docker_bindings.tar.gz /var/lib/ikats/
+  tar xvfz /var/lib/ikats/sandbox_docker_bindings.tar.gz
+  cp sandbox_hourly_weather_import_data.zip /var/lib/ikats/IKATSDATA/
+  unzip /var/lib/ikats/IKATSDATA/sandbox_hourly_weather_import_data.zip
   ```
 
 
@@ -50,7 +45,7 @@ STARTUP IKATS:
   docker-compose up
   ```
 * in a browser enter url: `localhost` => you can now use ikats sandbox
-* data import in ikats sandbox:
+* data import in ikats sandbox (cf. tutorial for hmi details):
   * create directory if not exist: ```sudo mkdir /var/lib/ikats/IKATSDATA/```
   * change owner and write rights if needed: ```sudo chown -R ikats:ikats /var/lib/ikats/```
   * move your data to the directory: ```/var/lib/ikats/IKATSDATA/```
@@ -63,8 +58,8 @@ PREREQUISITES:
 * linux version: ubuntu 16.04
 * docker version: 17.12.1-ce
 * docker compose version: 1.19.0
-* RAM: 8 Go
-* cpu: CPU 2.40GHz (dual-core)
+* RAM (recommended): 8 Go
+* cpu (recommended): CPU 2.40GHz (dual-core)
 
 
 WARNINGS:
