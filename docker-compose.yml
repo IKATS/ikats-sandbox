@@ -34,7 +34,7 @@ services:
     depends_on:
       - pgsql.dev
       - spark-master
-    image: ${IMAGE_PYBASE}
+    image: ${IMAGE_PYALGO}
     ports:
       - 8000:8000
     environment:
@@ -70,7 +70,7 @@ services:
 
   spark-worker-1:
     network_mode: bridge
-    image: ${IMAGE_PYBASE}
+    image: ${IMAGE_PYALGO}
     container_name: spark-worker-1
     links:
       - spark-master
