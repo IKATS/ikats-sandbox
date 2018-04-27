@@ -1,10 +1,8 @@
-INSTALLATION SANDBOX IKATS from CS network on linux desktop:
+INSTALLATION SANDBOX IKATS on linux desktop:
 ------------------------------------------------------------
 
-* install docker:
-  ```bash
-  sudo apt-get install docker-ce
-  ```
+* install docker :  see https://docs.docker.com/install/linux/docker-ce/ubuntu/  
+do not forget post steps : https://docs.docker.com/install/linux/linux-postinstall/
 * install docker-compose:
   ```bash
   sudo curl -L --fail https://github.com/docker/compose/releases/download/1.19.0/run.sh -o /usr/local/bin/docker-compose
@@ -20,24 +18,25 @@ INSTALLATION SANDBOX IKATS from CS network on linux desktop:
   cd ~/SCM
   git clone https://github.com/IKATS/ikats-sandbox.git
   ```
-* login docker hub:
-  ```bash
-  docker login hub.ops.ikats.org -u ikats -p ikatspass
-  ```
-* set proxy configuration (if needed):
+* set docker proxy configuration (if needed):
   edit docker proxy configuration file and fill in variables HTTP_PROXY, HTTPS_PROXY, NO_PROXY:
   ```bash
   sudo vi /etc/systemd/system/docker.service.d/http-proxy.conf
   ```
-* get docker_bindings from github ikats-sandbox:
+* create necessary directories
   ```bash
-  sudo mkdir /var/lib/ikats
-  sudo chown -R ikats:ikats /var/lib/ikats/
+  sudo mkdir -p /var/lib/ikats/IKATSDATA
+  sudo chown -R "YourUserId":"YourUserId" /var/lib/ikats/
   ```
-* retrieve docker_bindings_sandbox.tar.gz from last available release on github and unzip them:
+* retrieve sandbox_docker_bindings.tar.gz from last available release on github (https://github.com/IKATS/ikats-sandbox/releases),
+ copy it to /var/lib/ikats/ and untar it:
   ```bash
-  cp docker_bindings_sandbox.tar.gz /var/lib/ikats/
-  tar xvfz /var/lib/ikats/docker_bindings_sandbox.tar.gz
+  tar xvfz /var/lib/ikats/sandbox_docker_bindings.tar.gz
+  ```
+* (option tutorial) retrieve sandbox_hourly_weather_import_data.zip from last available release on github (https://github.com/IKATS/ikats-sandbox/releases),
+ copy it to /var/lib/ikats/IKATSDATA and unzip it:
+  ```bash
+  unzip /var/lib/ikats/IKATSDATA/sandbox_hourly_weather_import_data.zip
   ```
 
 
@@ -50,9 +49,9 @@ STARTUP IKATS:
   docker-compose up
   ```
 * in a browser enter url: `localhost` => you can now use ikats sandbox
-* data import in ikats sandbox:
+* data import in ikats sandbox (cf. tutorial for hmi details):
   * create directory if not exist: ```sudo mkdir /var/lib/ikats/IKATSDATA/```
-  * change owner and write rights if needed: ```sudo chown -R ikats:ikats /var/lib/ikats/```
+  * change owner and rights if needed: ```sudo chown -R "YourUserId":"YourUserId" /var/lib/ikats/```
   * move your data to the directory: ```/var/lib/ikats/IKATSDATA/```
   * use import operator in ikats
 
@@ -63,8 +62,8 @@ PREREQUISITES:
 * linux version: ubuntu 16.04
 * docker version: 17.12.1-ce
 * docker compose version: 1.19.0
-* RAM: 8 Go
-* cpu: CPU 2.40GHz (dual-core)
+* RAM (recommended): 8 Go
+* cpu (recommended): CPU 2.40GHz (dual-core)
 
 
 WARNINGS:
