@@ -1,10 +1,8 @@
 INSTALLATION SANDBOX IKATS on linux desktop:
 ------------------------------------------------------------
 
-* install docker:
-  ```bash
-  sudo apt-get install docker-ce
-  ```
+* install docker :  see https://docs.docker.com/install/linux/docker-ce/ubuntu/  
+do not forget post steps : https://docs.docker.com/install/linux/linux-postinstall/
 * install docker-compose:
   ```bash
   sudo curl -L --fail https://github.com/docker/compose/releases/download/1.19.0/run.sh -o /usr/local/bin/docker-compose
@@ -25,13 +23,19 @@ INSTALLATION SANDBOX IKATS on linux desktop:
   ```bash
   sudo vi /etc/systemd/system/docker.service.d/http-proxy.conf
   ```
-* retrieve sandbox_docker_bindings.tar.gz and sandbox_hourly_weather_import_data.zip from last available release on github and unzip them:
+* create necessary directories
   ```bash
-  sudo mkdir /var/lib/ikats
-  sudo chown -R "user_id":"user_id" /var/lib/ikats/
-  cp sandbox_docker_bindings.tar.gz /var/lib/ikats/
+  sudo mkdir -p /var/lib/ikats/IKATSDATA
+  sudo chown -R "YourUserId":"YourUserId" /var/lib/ikats/
+  ```
+* retrieve sandbox_docker_bindings.tar.gz from last available release on github (https://github.com/IKATS/ikats-sandbox/releases),
+ copy it to /var/lib/ikats/ and untar it:
+  ```bash
   tar xvfz /var/lib/ikats/sandbox_docker_bindings.tar.gz
-  cp sandbox_hourly_weather_import_data.zip /var/lib/ikats/IKATSDATA/
+  ```
+* (option tutorial) retrieve sandbox_hourly_weather_import_data.zip from last available release on github (https://github.com/IKATS/ikats-sandbox/releases),
+ copy it to /var/lib/ikats/IKATSDATA and unzip it:
+  ```bash
   unzip /var/lib/ikats/IKATSDATA/sandbox_hourly_weather_import_data.zip
   ```
 
@@ -47,7 +51,7 @@ STARTUP IKATS:
 * in a browser enter url: `localhost` => you can now use ikats sandbox
 * data import in ikats sandbox (cf. tutorial for hmi details):
   * create directory if not exist: ```sudo mkdir /var/lib/ikats/IKATSDATA/```
-  * change owner and write rights if needed: ```sudo chown -R ikats:ikats /var/lib/ikats/```
+  * change owner and rights if needed: ```sudo chown -R "YourUserId":"YourUserId" /var/lib/ikats/```
   * move your data to the directory: ```/var/lib/ikats/IKATSDATA/```
   * use import operator in ikats
 
