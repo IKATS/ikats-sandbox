@@ -116,7 +116,7 @@ services:
       TOMCAT_PORT: 8080
       DB_HOST: pgsql.dev
       DB_PORT: 5432
-      OPENTSDB_HOST: opentsdb-read
+      OPENTSDB_HOST: opentsdb
       OPENTSDB_PORT: 4242
       C3P0_ACQUIRE_INCREMENT: 2
       C3P0_MAX_SIZE: 20
