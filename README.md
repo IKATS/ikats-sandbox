@@ -3,7 +3,7 @@
 
 # What is IKATS ?
 
-  IKATS (*I*nnoative tool*K*it for the *A*nalysis of *T*ime *S*eries) is the result of a R&D Data Science Project and is carried out by [CS Systèmes d'Information](http://www.c-s.fr) in collaboration with the [AMA LIG team](http://ama.liglab.fr/).
+  IKATS (*I*nnovative tool*K*it for the *A*nalysis of *T*ime *S*eries) is the result of a R&D Data Science Project and is carried out by [CS Systèmes d'Information](http://www.c-s.fr) in collaboration with the [AMA LIG team](http://ama.liglab.fr/).
 
   IKATS provides a ready to use toolkit for the handling, exploratory analysis and visualization of large volumes of industrial Time Series (TS) data within a single big data framework.
 
@@ -13,14 +13,14 @@
 
 # What is the *IKATS Sandbox* (and what it's not)
 
-  * IKATS was primarily designed to work on cluster of machines and not a single desktop.
-  * Our IKATS Sandbox repository allow you to use it nevertheless, but user must be aware that its performance is not representative of the tool.
+  * IKATS is primarily designed to work on cluster of machines and not a single desktop.
+  * Our IKATS Sandbox repository allows you to use it nevertheless, but user must be aware that its performances are not representative of the tool.
   * Especially, some algorithms which use [Apache Spark](https://spark.apache.org/) could monopolize all desktop resources and make irreversibly freeze it, depending on the amount of data processed at a time.
-  * Data persistence: all data imported and generated in ikats are persisted as long as `/var/lib/ikats/docker_bindings` directory is not manually deleted or altered.
+  * Data persistence: all data imported and generated in IKATS are persisted as long as `/var/lib/ikats/docker_bindings` directory is not manually deleted or altered.
 
 # Installation on Linux
 
-## Prerequistes
+## Prerequisites
 
 The *IKATS Sandbox* is known to work on that system :
 * Linux version: Ubuntu 16.04
@@ -82,10 +82,10 @@ First, you have to get and setup the necessary tooling. If you have already inst
 
 # Next steps
 
-  * Read the [Geetting started tutorial](https://ikats.github.io/doc/tutorials/tuto_workflow.html)
+  * Read the [Getting started tutorial](https://ikats.github.io/doc/tutorials/tuto_workflow.html)
   * You could [import your "little" data](https://ikats.github.io/doc/tutorials/tuto_imports.html). Remind that you are on a limited system.
   * Other tutorials are available on the IKATS website starting from the [How to... section](https://ikats.github.io/howto.html)
   * Troubleshooting:
-      * If you're comfortable with the command line, read the [TROUBLESHOOTING.md](TROUBLESHOOTING.md) page.
+      * If you're comfortable with the command line, read the [troubleshooting.md](troubleshooting.md) page.
       * Feel free to contact the IKATS team via the [support page](https://ikats.org/support.html)
       * Feel a bug into the [issues tracker](https://github.com/IKATS/ikats-sandbox/issues)
