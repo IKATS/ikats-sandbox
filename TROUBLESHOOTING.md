@@ -26,7 +26,7 @@ Then go to [](https://localhost:9000) to reach the UI page
 
 ## Image logs content
 
-In order to troubleshoot IKATS, intersting logs are :
+In order to troubleshoot IKATS, interesting logs are :
 
 - **ikats/pyalgo**
   - Algorithm run status and failure root cause
