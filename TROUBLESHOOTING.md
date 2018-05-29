@@ -2,7 +2,7 @@ Troubleshooting IKATS
 =====================
 
 
-IKATS may run locally with `docker-compose` (for testing and development pourposes only, do not use it in production).
+IKATS may run locally with `docker-compose` (for testing and development purpose only, do not use it in production).
 This page gives tips to deal with some common errors you can encounter.
 
 
@@ -15,7 +15,7 @@ As a quickstart, to run it just do :
 ```bash
 docker run -d -p 9000:9000 -v /var/run/docker.sock:/var/run/docker.sock -v /opt/portainer:/data portainer/portainer
 ```
-Then go to [](https://localhost:9000) to reach the UI page
+Then go to [http://localhost:9000](http://localhost:9000) to reach the UI page
 
 
 ## Checking logs
