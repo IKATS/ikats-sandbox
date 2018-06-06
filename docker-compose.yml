@@ -1,6 +1,10 @@
 version: '2'
-services:
 
+volumes:
+  gui-content:
+  viztools-cache:
+    
+services:
   tomee_ingestion:
     network_mode: bridge
     container_name: ikats-ingestion
@@ -95,16 +99,27 @@ services:
       TDM_HOST: datamodel-api
       TDM_PORT: 8080
 
-  hmi:
+  gui-builder:
     network_mode: bridge
-    image: ${IMAGE_HMI}
-    ports:
-      - "80:80"
+    image: ${IMAGE_GUI_BUILDER}
     environment:
       TOMCAT_ADDR: ${DEMO_HOST}:8087
       GUNICORN_ADDR: ${DEMO_HOST}:8000
       TOMEE_ADDR: ${DEMO_HOST}:8081
       OPENTSDB_ADDR: ${DEMO_HOST}:4242
+    volumes:
+      - gui-content:/app/build:rw
+      - viztools-cache:/app/fetch-vt:rw
+      # Uncomment the following line to use your customized operators list
+      #- ./repo-list.yml:/app/repo-list.yml
+
+  hmi:
+    network_mode: bridge
+    image: nginx:1.15.0-alpine
+    ports:
+      - "80:80"
+    volumes:
+      - gui-content:/usr/share/nginx/html:ro
 
   datamodel-api:
     network_mode: bridge
