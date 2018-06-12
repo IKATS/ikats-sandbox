@@ -1,14 +1,27 @@
 version: '2'
+
+volumes:
+  operators:
+  operators-cache:
+
 services:
 
-  tomee_ingestion:
+  operator-fetcher:
     network_mode: bridge
-    container_name: ikats-ingestion
+    image: ${IMAGE_OP_FETCHER}
+    volumes:
+      - operators:/app/op:rw
+      - operators-cache:/app/fetch-op:rw
+      # Uncomment the following line to use your customized operators list
+      #- ./repo-list.yml:/app/repo-list.yml
+
+  ikats-ingestion:
+    network_mode: bridge
     image: ${IMAGE_INGESTION}
     ports:
       - "8081:8081"
     environment:
-      DB_HOST: pgsql.dev
+      DB_HOST: ikats-db
       DB_PORT: 5432
       OPENTSDB_READ_HOST: opentsdb
       OPENTSDB_READ_PORT: 4242
@@ -21,10 +34,10 @@ services:
       C3P0_MIN_SIZE: 5
       C3P0_TIMEOUT: 90
     depends_on:
-      - pgsql.dev
+      - ikats-db
       - opentsdb
     links:
-      - pgsql.dev
+      - ikats-db
       - opentsdb
     volumes:
       - /var/lib/ikats/IKATSDATA:/mnt/IKATSDATA
@@ -32,9 +45,9 @@ services:
   python_api:
     network_mode: bridge
     depends_on:
-      - pgsql.dev
+      - ikats-db
       - spark-master
-    image: ${IMAGE_PYALGO}
+    image: ${IMAGE_PYBASE}
     ports:
       - 8000:8000
     environment:
@@ -43,7 +56,7 @@ services:
       OPENTSDB_READ_PORT: 4242
       OPENTSDB_WRITE_HOST: opentsdb
       OPENTSDB_WRITE_PORT: 4242
-      POSTGRES_HOST: pgsql.dev
+      POSTGRES_HOST: ikats-db
       POSTGRES_PORT: 5432
       SPARK_MASTER_HOST: spark-master
       SPARK_MASTER_PORT: 7077
@@ -53,7 +66,10 @@ services:
       - opentsdb
       - datamodel-api
       - spark-master
-      - pgsql.dev
+      - ikats-db
+    volumes:
+      - operators:/ikats/ikats/algo:ro
+
 
   spark-master:
     network_mode: bridge
@@ -70,13 +86,13 @@ services:
 
   spark-worker-1:
     network_mode: bridge
-    image: ${IMAGE_PYALGO}
+    image: ${IMAGE_PYBASE}
     container_name: spark-worker-1
     links:
       - spark-master
       - opentsdb
       - datamodel-api
-      - pgsql.dev
+      - ikats-db
     depends_on:
       - spark-master
     user: root
@@ -87,13 +103,15 @@ services:
       OPENTSDB_READ_PORT: 4242
       OPENTSDB_WRITE_HOST: opentsdb
       OPENTSDB_WRITE_PORT: 4242
-      POSTGRES_HOST: pgsql.dev
+      POSTGRES_HOST: ikats-db
       POSTGRES_PORT: 5432
       SPARK_MASTER_HOST: spark-master
       SPARK_MASTER_PORT: 7077
       SPARK_MODE: slave
       TDM_HOST: datamodel-api
       TDM_PORT: 8080
+    volumes:
+      - operators:/ikats/ikats/algo:ro
 
   hmi:
     network_mode: bridge
@@ -114,7 +132,7 @@ services:
     environment:
       TOMCAT_HOST: datamodel-api
       TOMCAT_PORT: 8080
-      DB_HOST: pgsql.dev
+      DB_HOST: ikats-db
       DB_PORT: 5432
       OPENTSDB_HOST: opentsdb
       OPENTSDB_PORT: 4242
@@ -125,13 +143,13 @@ services:
       C3P0_MIN_SIZE: 5
       C3P0_TIMEOUT: 90
     depends_on:
-      - pgsql.dev
+      - ikats-db
       - opentsdb
     links:
-      - pgsql.dev
+      - ikats-db
       - opentsdb
 
-  pgsql.dev:
+  ikats-db:
     network_mode: bridge
     image: ${IMAGE_POSTGRES}
     environment:
