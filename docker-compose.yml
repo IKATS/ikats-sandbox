@@ -15,7 +15,7 @@ services:
       - operators:/app/op:rw
       - operators-cache:/app/fetch-op:rw
       # Uncomment the following line to use your customized operators list
-      #- ./repo-list.yml:/app/repo-list.yml
+      #- ./op-repo-list.yml:/app/op-repo-list.yml
 
   ikats-ingestion:
     network_mode: bridge
@@ -127,7 +127,7 @@ services:
       - gui-content:/app/build:rw
       - viztools-cache:/app/fetch-vt:rw
       # Uncomment the following line to use your customized operators list
-      #- ./repo-list.yml:/app/repo-list.yml
+      #- ./vt-repo-list.yml:/app/vt-repo-list.yml
 
   hmi:
     network_mode: bridge
