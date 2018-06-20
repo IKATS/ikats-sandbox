@@ -54,17 +54,17 @@ First, you have to get and setup the necessary tooling. If you have already inst
   sudo mkdir -p /var/lib/ikats/IKATSDATA
   sudo chown -R ${USER}:${USER} /var/lib/ikats/
   ```
-3. Get and extract the `latest` release of the file `sandbox_docker_bindings.tar.gz` On https://github.com/IKATS/ikats-sandbox/releases.
-  For release `v0.1.0` :
+3. Get and extract the [`latest`](https://github.com/IKATS/ikats-sandbox/releases/latest) release of the file `sandbox_docker_bindings.tar.gz` ([list of releases](https://github.com/IKATS/ikats-sandbox/releases)).  
+  Example, for release `x.y.z` :
   ```bash
-  IKATS_RELEASE=v0.1.0
+  IKATS_RELEASE=x.y.z
   wget -P /tmp/ "https://github.com/IKATS/ikats-sandbox/releases/download/${IKATS_RELEASE}/sandbox_docker_bindings.tar.gz"
   tar xzf /tmp/sandbox_docker_bindings.tar.gz -C /var/lib/ikats
   rm /tmp/sandbox_docker_bindings.tar.gz
   ```
 4. (optional) Get and extract data needed for [IKATS tutorials](https://ikats.org/tutorials.html)
   ```bash
-  IKATS_RELEASE=v0.1.0
+  IKATS_RELEASE=x.y.z
   wget -P /tmp/ "https://github.com/IKATS/ikats-sandbox/releases/download/${IKATS_RELEASE}/sandbox_hourly_weather_import_data.zip"
   mkdir /var/lib/ikats/IKATSDATA
   unzip /tmp/sandbox_hourly_weather_import_data.zip -d /var/lib/ikats/IKATSDATA
