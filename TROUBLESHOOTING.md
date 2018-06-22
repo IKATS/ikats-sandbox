@@ -1,7 +1,12 @@
 # Troubleshooting IKATS
 
-KATS may run locally with `docker-compose` (for testing and development purpose only, do not use it in production).
+IKATS may run locally with `docker-compose` (for testing and development purpose only, do not use it in production).
 This page gives tips to deal with some common errors you can encounter.
+
+## Port 80 is already used by host
+
+If port *80* is already in use, you can customized `.env` file to change the `${GUI_PORT}` variable to a unused one.
+This may happen if you already have a webserver running on your host.
 
 ## Portainer
 
