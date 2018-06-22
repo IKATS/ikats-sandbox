@@ -120,10 +120,10 @@ services:
     network_mode: bridge
     image: ${IMAGE_GUI_BUILDER}
     environment:
-      TOMCAT_ADDR: ${DEMO_HOST}:8087
-      GUNICORN_ADDR: ${DEMO_HOST}:8000
-      TOMEE_ADDR: ${DEMO_HOST}:8081
-      OPENTSDB_ADDR: ${DEMO_HOST}:4242
+      TOMCAT_ADDR: ${GUI_IP}:8087
+      GUNICORN_ADDR: ${GUI_IP}:8000
+      TOMEE_ADDR: ${GUI_IP}:8081
+      OPENTSDB_ADDR: ${GUI_IP}:4242
     volumes:
       - gui-content:/app/build:rw
       - viztools-cache:/app/fetch-vt:rw
@@ -135,7 +135,7 @@ services:
     network_mode: bridge
     image: nginx:1.15.0-alpine
     ports:
-      - "80:80"
+      - "${GUI_PORT}:80"
     volumes:
       - gui-content:/usr/share/nginx/html:ro
 
