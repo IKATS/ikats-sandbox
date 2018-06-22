@@ -14,7 +14,8 @@ services:
     volumes:
       - operators:/app/op:rw
       - operators-cache:/app/fetch-op:rw
-      # Uncomment the following line to use your customized operators list
+      # Uncomment the following lines to use your customized operators list
+      #- /path/to/op:/app/local/op:ro
       #- ./op-repo-list.yml:/app/op-repo-list.yml
 
   ikats-ingestion:
@@ -126,7 +127,8 @@ services:
     volumes:
       - gui-content:/app/build:rw
       - viztools-cache:/app/fetch-vt:rw
-      # Uncomment the following line to use your customized operators list
+      # Uncomment the following lines to use your customized operators list
+      #- /path/to/vt:/app/local/vt:ro
       #- ./vt-repo-list.yml:/app/vt-repo-list.yml
 
   hmi:
