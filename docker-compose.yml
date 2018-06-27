@@ -16,6 +16,15 @@ services:
       - operators-cache:/app/fetch-op:rw
       # Uncomment the following line to use your customized operators list
       #- ./op-repo-list.yml:/app/op-repo-list.yml
+    environment:
+      DB_HOST: ikats-db
+      DB_PORT: 5432
+      DB_PWD: ikats
+      DB_USER: ikats
+    depends_on:
+      - ikats-db
+    links:
+      - ikats-db
 
   ikats-ingestion:
     network_mode: bridge
