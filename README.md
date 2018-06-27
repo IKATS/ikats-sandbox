@@ -1,12 +1,12 @@
-# ![IKATS Logo](https://ikats.github.io/img/Logo-ikats-icon.png) IKATS Sandbox
+# ![IKATS Logo](https://ikats.org/img/Logo-ikats-icon.png) IKATS Sandbox
 
 ## What is IKATS?
 
-IKATS (*I*nnoative tool*K*it for the *A*nalysis of *T*ime *S*eries) is the result of a R&D Data Science Project and is carried out by [CS Systèmes d'Information](http://www.c-s.fr) in collaboration with the [AMA LIG team](http://ama.liglab.fr/).
+IKATS (*I*nnovative tool*K*it for the *A*nalysis of *T*ime *S*eries) is the result of a R&D Data Science Project and is carried out by [CS Systèmes d'Information](http://www.c-s.fr) in collaboration with the [AMA LIG team](http://ama.liglab.fr/).
 
 IKATS provides a ready to use toolkit for the handling, exploratory analysis and visualization of large volumes of industrial Time Series (TS) data within a single big data framework.
 
-The project website is hosted at : https://www.ikats.org
+The project website is hosted at : [https://ikats.org](https://ikats.org)
 
 There is also a [community and a commercial support](https://ikats.org/support.html).
 
@@ -87,14 +87,14 @@ First, you have to get and setup the necessary tooling. If you have already inst
     docker-compose up
     ```
 
-2. Depending on the `.env` file configuration, open to the IKATS Workbench in your browser http://${GUI_IP}:${GUI_PORT}
+2. Depending on the `.env` file configuration, open to the IKATS Workbench in your browser `http://${GUI_IP}:${GUI_PORT}`
 
 ## Next steps
 
-- Read the [Geetting started tutorial](https://ikats.github.io/doc/tutorials/tuto_workflow.html)
-- You could [import your "little" data](https://ikats.github.io/doc/tutorials/tuto_imports.html). Remind that you are on a limited system.
-- Other tutorials are available on the IKATS website starting from the [How to... section](https://ikats.github.io/howto.html)
+- Read the [Getting started tutorial](https://ikats.org/doc/tutorials/tuto_workflow.html)
+- You could [import your "small" data](https://ikats.org/doc/tutorials/tuto_imports.html). Remind that you are on a limited system.
+- Other tutorials are available on the IKATS website starting from the [How to... section](https://ikats.org/howto.html)
 - Troubleshooting:
   - If you're comfortable with the command line, read the [TROUBLESHOOTING.md](TROUBLESHOOTING.md) page.
   - Feel free to contact the IKATS team via the [support page](https://ikats.org/support.html)
-  - Feel a bug into the [issues tracker](https://github.com/IKATS/ikats-sandbox/issues)
+  - Feel a bug into the [issues tracker](https://github.com/IKATS/IKATS/issues)
