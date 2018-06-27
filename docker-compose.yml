@@ -19,6 +19,8 @@ services:
     environment:
       DB_HOST: ikats-db
       DB_PORT: 5432
+      DB_PWD: ikats
+      DB_USER: ikats
     depends_on:
       - ikats-db
     links:
