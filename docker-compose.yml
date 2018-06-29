@@ -62,7 +62,7 @@ services:
       - spark-master
     image: ${IMAGE_PYBASE}
     ports:
-      - 8000:8000
+      - "8000:8000"
     environment:
       GUNICORN_PORT: 8000
       OPENTSDB_READ_HOST: opentsdb
@@ -83,11 +83,9 @@ services:
     volumes:
       - operators:/ikats/ikats/algo:ro
 
-
   spark-master:
     network_mode: bridge
     image: ${IMAGE_SPARK}
-    container_name: spark-master
     ports:
       - "10000:8080"
       - "7077:7077"
@@ -100,7 +98,6 @@ services:
   spark-worker-1:
     network_mode: bridge
     image: ${IMAGE_PYBASE}
-    container_name: spark-worker-1
     links:
       - spark-master
       - opentsdb
@@ -108,7 +105,6 @@ services:
       - ikats-db
     depends_on:
       - spark-master
-    user: root
     ports:
       - "10001:8081"
     environment:
