@@ -1,6 +1,7 @@
 version: '2'
 
 volumes:
+  families:
   operators:
   operators-cache:
   gui-content:
@@ -12,10 +13,11 @@ services:
     network_mode: bridge
     image: ${IMAGE_OP_FETCHER}
     volumes:
+      - families:/app/fam:rw
       - operators:/app/op:rw
       - operators-cache:/app/fetch-op:rw
       # Uncomment the following line to use your customized operators list
-      #- ./op-repo-list.yml:/app/op-repo-list.yml
+      #- ./op-repo-list.yml:/app/repo-list.yml
     environment:
       DB_HOST: ikats-db
       DB_PORT: 5432
@@ -133,10 +135,12 @@ services:
       TOMEE_ADDR: ${DEMO_HOST}:8081
       OPENTSDB_ADDR: ${DEMO_HOST}:4242
     volumes:
+      - families:/app/fam:ro
       - gui-content:/app/build:rw
       - viztools-cache:/app/fetch-vt:rw
       # Uncomment the following line to use your customized operators list
       #- ./vt-repo-list.yml:/app/vt-repo-list.yml
+
 
   hmi:
     network_mode: bridge
