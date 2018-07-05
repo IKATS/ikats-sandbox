@@ -1,6 +1,7 @@
 version: '2'
 
 volumes:
+  families:
   operators:
   operators-cache:
   gui-content:
@@ -12,10 +13,21 @@ services:
     network_mode: bridge
     image: ${IMAGE_OP_FETCHER}
     volumes:
+      - families:/app/fam:rw
       - operators:/app/op:rw
       - operators-cache:/app/fetch-op:rw
-      # Uncomment the following line to use your customized operators list
-      #- ./op-repo-list.yml:/app/op-repo-list.yml
+      # Uncomment the following lines to use your customized operators list
+      #- /path/to/op:/app/local/op:ro
+      #- ./op-repo-list.yml:/app/repo-list.yml
+    environment:
+      DB_HOST: ikats-db
+      DB_PORT: 5432
+      DB_PWD: ikats
+      DB_USER: ikats
+    depends_on:
+      - ikats-db
+    links:
+      - ikats-db
 
   ikats-ingestion:
     network_mode: bridge
@@ -51,7 +63,7 @@ services:
       - spark-master
     image: ${IMAGE_PYBASE}
     ports:
-      - 8000:8000
+      - "8000:8000"
     environment:
       GUNICORN_PORT: 8000
       OPENTSDB_READ_HOST: opentsdb
@@ -72,11 +84,9 @@ services:
     volumes:
       - operators:/ikats/ikats/algo:ro
 
-
   spark-master:
     network_mode: bridge
     image: ${IMAGE_SPARK}
-    container_name: spark-master
     ports:
       - "10000:8080"
       - "7077:7077"
@@ -89,7 +99,6 @@ services:
   spark-worker-1:
     network_mode: bridge
     image: ${IMAGE_PYBASE}
-    container_name: spark-worker-1
     links:
       - spark-master
       - opentsdb
@@ -97,7 +106,6 @@ services:
       - ikats-db
     depends_on:
       - spark-master
-    user: root
     ports:
       - "10001:8081"
     environment:
@@ -119,21 +127,23 @@ services:
     network_mode: bridge
     image: ${IMAGE_GUI_BUILDER}
     environment:
-      TOMCAT_ADDR: ${DEMO_HOST}:8087
-      GUNICORN_ADDR: ${DEMO_HOST}:8000
-      TOMEE_ADDR: ${DEMO_HOST}:8081
-      OPENTSDB_ADDR: ${DEMO_HOST}:4242
+      TOMCAT_ADDR: ${GUI_IP}:8087
+      GUNICORN_ADDR: ${GUI_IP}:8000
+      TOMEE_ADDR: ${GUI_IP}:8081
+      OPENTSDB_ADDR: ${GUI_IP}:4242
     volumes:
+      - families:/app/fam:ro
       - gui-content:/app/build:rw
       - viztools-cache:/app/fetch-vt:rw
-      # Uncomment the following line to use your customized operators list
+      # Uncomment the following lines to use your customized operators list
+      #- /path/to/vt:/app/local/vt:ro
       #- ./vt-repo-list.yml:/app/vt-repo-list.yml
 
   hmi:
     network_mode: bridge
     image: nginx:1.15.0-alpine
     ports:
-      - "80:80"
+      - "${GUI_PORT}:80"
     volumes:
       - gui-content:/usr/share/nginx/html:ro
 
