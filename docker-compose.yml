@@ -54,7 +54,7 @@ services:
       - ikats-db
       - opentsdb
     volumes:
-      - /var/lib/ikats/IKATSDATA:/mnt/IKATSDATA
+      - ${TSdata}:/mnt/IKATSDATA
 
   python_api:
     network_mode: bridge
@@ -76,6 +76,7 @@ services:
       SPARK_MASTER_PORT: 7077
       TDM_HOST: datamodel-api
       TDM_PORT: 8080
+      TSDATA: ${TSdataContainerPath}
     links:
       - opentsdb
       - datamodel-api
@@ -83,6 +84,7 @@ services:
       - ikats-db
     volumes:
       - operators:/ikats/ikats/algo:ro
+      - ${TSdata}:${TSdataContainerPath}
 
   spark-master:
     network_mode: bridge
@@ -137,7 +139,7 @@ services:
       - viztools-cache:/app/fetch-vt:rw
       # Uncomment the following lines to use your customized operators list
       #- /path/to/vt:/app/local/vt:ro
-      #- ./vt-repo-list.yml:/app/vt-repo-list.yml
+      #- ./vt-repo-list.yml:/app/repo-list.yml
 
   hmi:
     network_mode: bridge
