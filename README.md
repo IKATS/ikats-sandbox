@@ -84,7 +84,7 @@ First, you have to get and setup the necessary tooling. If you have already inst
 
     ```bash
     cd ~/SCM/ikats-sandbox
-    docker-compose up
+    ./start_IKATS.sh
     ```
 
 2. Depending on the `.env` file configuration, open to the IKATS Workbench in your browser `http://${GUI_IP}:${GUI_PORT}`
