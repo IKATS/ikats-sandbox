@@ -129,6 +129,7 @@ services:
     network_mode: bridge
     image: ${IMAGE_GUI_BUILDER}
     environment:
+      IKATS_VERSION: ${IKATS_VERSION}
       TOMCAT_ADDR: ${GUI_IP}:8087
       GUNICORN_ADDR: ${GUI_IP}:8000
       TOMEE_ADDR: ${GUI_IP}:8081
