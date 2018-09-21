@@ -21,7 +21,7 @@ then
   [ -n "$(git status --porcelain)" ] && IKATS_build="${IKATS_build} modified"
 
   # Start IKATS
-  IKATS_VERSION="Sandbox ${IKATS_version} - build ${IKATS_build}" docker-compose up --build
+  IKATS_VERSION="Sandbox version ${IKATS_version} - build ${IKATS_build}" docker-compose up --build
 else
   docker-compose up --build
 fi
