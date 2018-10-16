@@ -10,7 +10,6 @@ volumes:
 services:
 
   operator-fetcher:
-    network_mode: bridge
     image: ${IMAGE_OP_FETCHER}
     volumes:
       - families:/app/fam:rw
@@ -22,18 +21,17 @@ services:
     environment:
       DB_HOST: ikats-db
       DB_PORT: 5432
-      DB_PWD: ikats
       DB_USER: ikats
+      DB_PWD: ikats
     depends_on:
       - ikats-db
     links:
       - ikats-db
 
-  ikats-ingestion:
-    network_mode: bridge
+  ingestion:
     image: ${IMAGE_INGESTION}
-    ports:
-      - "8081:8081"
+    expose:
+      - "8081"
     environment:
       DB_HOST: ikats-db
       DB_PORT: 5432
@@ -57,13 +55,12 @@ services:
       - ${TSdata}:/mnt/IKATSDATA
 
   python_api:
-    network_mode: bridge
     depends_on:
       - ikats-db
       - spark-master
     image: ${IMAGE_PYBASE}
-    ports:
-      - "8000:8000"
+    expose:
+      - "8000"
     environment:
       GUNICORN_PORT: 8000
       OPENTSDB_READ_HOST: opentsdb
@@ -87,7 +84,6 @@ services:
       - ${TSdata}:${TSdataContainerPath}
 
   spark-master:
-    network_mode: bridge
     image: ${IMAGE_SPARK}
     ports:
       - "10000:8080"
@@ -99,7 +95,6 @@ services:
       - datamodel-api
 
   spark-worker-1:
-    network_mode: bridge
     image: ${IMAGE_PYBASE}
     links:
       - spark-master
@@ -126,13 +121,14 @@ services:
       - operators:/ikats/ikats/algo:ro
 
   gui-builder:
-    network_mode: bridge
     image: ${IMAGE_GUI_BUILDER}
     environment:
-      TOMCAT_ADDR: ${GUI_IP}:8087
-      GUNICORN_ADDR: ${GUI_IP}:8000
-      TOMEE_ADDR: ${GUI_IP}:8081
-      OPENTSDB_ADDR: ${GUI_IP}:4242
+      IKATS_VERSION: ${IKATS_VERSION}
+      HOST: ${GUI_IP}
+      TOMCAT_ADDR: datamodel-api
+      GUNICORN_ADDR: python_api
+      TOMEE_ADDR: ingestion
+      OPENTSDB_ADDR: opentsdb
     volumes:
       - families:/app/fam:ro
       - gui-content:/app/build:rw
@@ -142,18 +138,31 @@ services:
       #- ./vt-repo-list.yml:/app/repo-list.yml
 
   hmi:
-    network_mode: bridge
-    image: nginx:1.15.0-alpine
+    image: ${IMAGE_GUI}
+    environment:
+      HOST: ${GUI_IP}
+      TOMCAT_ADDR: datamodel-api
+      TOMCAT_PORT: 8080
+      GUNICORN_ADDR: python_api
+      GUNICORN_PORT: 8000
+      TOMEE_ADDR: ingestion
+      TOMEE_PORT: 8081
+      OPENTSDB_ADDR: opentsdb
+      OPENTSDB_PORT: 4242
     ports:
       - "${GUI_PORT}:80"
     volumes:
       - gui-content:/usr/share/nginx/html:ro
+    links:
+      - datamodel-api
+      - python_api
+      - ingestion
+      - opentsdb
 
   datamodel-api:
-    network_mode: bridge
     image: ${IMAGE_DATAMODEL}
-    ports:
-      - "8087:8080"
+    expose:
+      - "8080"
     environment:
       TOMCAT_HOST: datamodel-api
       TOMCAT_PORT: 8080
@@ -175,7 +184,6 @@ services:
       - opentsdb
 
   ikats-db:
-    network_mode: bridge
     image: ${IMAGE_POSTGRES}
     environment:
       POSTGRES_PASSWORD: ikats
@@ -188,7 +196,6 @@ services:
       - /var/lib/ikats/docker_bindings/postgresql:/home/postgres/psql/9.5
 
   hbase-docker:
-    network_mode: bridge
     hostname: hbase-docker
     image: ${IMAGE_HBASE}
     ports:
@@ -205,16 +212,15 @@ services:
       - /var/lib/ikats/docker_bindings/hbase/hbase:/data/hbase
 
   opentsdb:
-    network_mode: bridge
     image: ${IMAGE_OPENTSDB}
     depends_on:
       - hbase-docker
     links:
       - hbase-docker
-    restart: on-failure
     ports:
-      - "4242:4242"
       - "60030:60030"
+    expose:
+      - "4242"
     environment:
       TSD_CONF_tsd__storage__hbase__zk_quorum: hbase-docker
       TSD_CONF_tsd__network__port: 4242
