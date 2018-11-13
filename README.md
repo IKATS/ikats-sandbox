@@ -98,3 +98,7 @@ First, you have to get and setup the necessary tooling. If you have already inst
   - If you're comfortable with the command line, read the [TROUBLESHOOTING.md](TROUBLESHOOTING.md) page.
   - Feel free to contact the IKATS team via the [support page](https://ikats.org/support.html)
   - Feel a bug into the [issues tracker](https://github.com/IKATS/IKATS/issues)
+
+## Release Notes
+
+see [changelog](https://github.com/IKATS/IKATS/CHANGELOG.md) for details
