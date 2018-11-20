@@ -195,8 +195,8 @@ services:
     volumes:
       - /var/lib/ikats/docker_bindings/postgresql:/home/postgres/psql/9.5
 
-  hbase-docker:
-    hostname: hbase-docker
+  hbase:
+    hostname: hbase
     image: ${IMAGE_HBASE}
     ports:
       # Master port
@@ -208,21 +208,23 @@ services:
       - "9095:9095"
       - "8080:8080"
       - "8085:8085"
+    environment:
+      CLUSTER_MODE: "false"
     volumes:
       - /var/lib/ikats/docker_bindings/hbase/hbase:/data/hbase
 
   opentsdb:
     image: ${IMAGE_OPENTSDB}
     depends_on:
-      - hbase-docker
+      - hbase
     links:
-      - hbase-docker
+      - hbase
     ports:
       - "60030:60030"
     expose:
       - "4242"
     environment:
-      TSD_CONF_tsd__storage__hbase__zk_quorum: hbase-docker
+      TSD_CONF_tsd__storage__hbase__zk_quorum: hbase
       TSD_CONF_tsd__network__port: 4242
       TSD_CONF_tsd__http__staticroot: /usr/share/opentsdb/static/
       TSD_CONF_tsd__http__cachedir: /tmp/opentsdb
