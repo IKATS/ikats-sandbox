@@ -35,10 +35,8 @@ services:
     environment:
       DB_HOST: ikats-db
       DB_PORT: 5432
-      OPENTSDB_READ_HOST: opentsdb
-      OPENTSDB_READ_PORT: 4242
-      OPENTSDB_WRITE_HOST: opentsdb
-      OPENTSDB_WRITE_PORT: 4242
+      OPENTSDB_HOST: opentsdb
+      OPENTSDB_PORT: 4242
       C3P0_ACQUIRE_INCREMENT: 2
       C3P0_MAX_SIZE: 20
       C3P0_IDLE_TEST_PERIOD: 50
