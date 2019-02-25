@@ -35,10 +35,8 @@ services:
     environment:
       DB_HOST: ikats-db
       DB_PORT: 5432
-      OPENTSDB_READ_HOST: opentsdb
-      OPENTSDB_READ_PORT: 4242
-      OPENTSDB_WRITE_HOST: opentsdb
-      OPENTSDB_WRITE_PORT: 4242
+      OPENTSDB_HOST: opentsdb
+      OPENTSDB_PORT: 4242
       C3P0_ACQUIRE_INCREMENT: 2
       C3P0_MAX_SIZE: 20
       C3P0_IDLE_TEST_PERIOD: 50
@@ -54,7 +52,7 @@ services:
     volumes:
       - ${TSdata}:/mnt/IKATSDATA
 
-  python_api:
+  python-api:
     depends_on:
       - ikats-db
       - spark-master
@@ -126,7 +124,7 @@ services:
       IKATS_VERSION: ${IKATS_VERSION}
       HOST: ${GUI_IP}
       TOMCAT_ADDR: datamodel-api
-      GUNICORN_ADDR: python_api
+      GUNICORN_ADDR: python-api
       TOMEE_ADDR: ingestion
       OPENTSDB_ADDR: opentsdb
     volumes:
@@ -143,7 +141,7 @@ services:
       HOST: ${GUI_IP}
       TOMCAT_ADDR: datamodel-api
       TOMCAT_PORT: 8080
-      GUNICORN_ADDR: python_api
+      GUNICORN_ADDR: python-api
       GUNICORN_PORT: 8000
       TOMEE_ADDR: ingestion
       TOMEE_PORT: 8081
@@ -155,7 +153,7 @@ services:
       - gui-content:/usr/share/nginx/html:ro
     links:
       - datamodel-api
-      - python_api
+      - python-api
       - ingestion
       - opentsdb
 
@@ -195,8 +193,8 @@ services:
     volumes:
       - /var/lib/ikats/docker_bindings/postgresql:/home/postgres/psql/9.5
 
-  hbase-docker:
-    hostname: hbase-docker
+  hbase:
+    hostname: hbase
     image: ${IMAGE_HBASE}
     ports:
       # Master port
@@ -208,21 +206,23 @@ services:
       - "9095:9095"
       - "8080:8080"
       - "8085:8085"
+    environment:
+      CLUSTER_MODE: "false"
     volumes:
       - /var/lib/ikats/docker_bindings/hbase/hbase:/data/hbase
 
   opentsdb:
     image: ${IMAGE_OPENTSDB}
     depends_on:
-      - hbase-docker
+      - hbase
     links:
-      - hbase-docker
+      - hbase
     ports:
       - "60030:60030"
     expose:
       - "4242"
     environment:
-      TSD_CONF_tsd__storage__hbase__zk_quorum: hbase-docker
+      TSD_CONF_tsd__storage__hbase__zk_quorum: hbase
       TSD_CONF_tsd__network__port: 4242
       TSD_CONF_tsd__http__staticroot: /usr/share/opentsdb/static/
       TSD_CONF_tsd__http__cachedir: /tmp/opentsdb
